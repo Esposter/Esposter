@@ -44,7 +44,7 @@ const id = useId();
     }"
   >
     <div
-      :="mergeProps(attrs, $attrs)"
+      :="{ ...$attrs, ...mergeProps(attrs, $attrs) }"
       :class="[
         isVertical ? 'inline-flex flex-col' : 'inline-flex',
         variant ? 'ui-bar' : 'ui-field',

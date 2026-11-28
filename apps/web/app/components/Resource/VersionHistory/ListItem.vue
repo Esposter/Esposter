@@ -48,7 +48,7 @@ const subtitle = computed(() =>
       :class="{ 'cursor-default': !isPreviewable }"
       :aria-current="isHighlighted || undefined"
       :data-highlighted="isHighlighted || undefined"
-      :type="isPreviewable ? 'button' : undefined"
+      :="isPreviewable ? { type: 'button' } : {}"
       ui-item
       flex-1
       min-w-0

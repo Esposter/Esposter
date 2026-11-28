@@ -30,11 +30,8 @@
     "#src/*.mp3": "./app/*.mp3",
     "#src/*.png": "./app/*.png",
     "#src/*.svg": "./app/*.svg",
-    "#src/*.tsx": "./app/*.tsx",
     "#src/*.vue": "./app/*.vue",
     "#src/*.wasm": "./app/*.wasm",
-    "#src/*.webp": "./app/*.webp",
-    "#src/*.woff2": "./app/*.woff2",
     "#src/*": "./app/*.ts",
     "#uno.config": "./uno.config.ts"
   },

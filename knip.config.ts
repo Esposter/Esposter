@@ -5,9 +5,6 @@ const knipConfiguration: KnipConfig = {
   ignoreBinaries: ["pwsh"],
   ignoreExportsUsedInFile: true,
   ignoreIssues: {
-    // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop it once an `import.meta.glob` pattern resolves
-    // Through the manifest's subpath imports, the only users of the app's `#src/*.html`, `*.tsx` and `*.wasm` patterns
-    "apps/web/package.json": ["subpaths"],
     // The persona's copy of genshin-text's models is held byte for byte to its source (getPersonaModuleSource), so it
     // Keeps the exports only the source's readers use
     "packages/genshin-persona/src/generated/**": ["exports"],
@@ -39,12 +36,8 @@ const knipConfiguration: KnipConfig = {
         "server/types/cloudflare.d.ts",
         "server/services/devSession/postDevSession.ts",
         "service-worker/sw.ts",
-        // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop it once an `import.meta.glob` pattern resolves
-        // Through the manifest's subpath imports, which reach each worker and worklet
-        "app/workers/**/*.ts",
       ],
-      // @TODO: https://github.com/webpro-nl/knip/issues/2399 — drop the tilesets once their glob is followed, since
-      // Knip reads their Tiled `.tsx` definitions as unused source
+      // Tiled reads these external tileset definitions through the TMX and JSON map files, which Knip does not follow
       ignore: ["app/assets/dungeons/tilesets/**/*.tsx", "public/**", "shared/generated/**"],
       ignoreDependencies: [
         "@iconify-json/.+",

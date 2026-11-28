@@ -32,7 +32,7 @@ const id = useId();
       if (value !== undefined) modelValue = value;
     }"
   >
-    <div :="mergeProps(attrs, $attrs)" flex flex-col>
+    <div :="{ ...$attrs, ...mergeProps(attrs, $attrs) }" flex flex-col>
       <Radio.Root
         v-for="({ description, title, value }, index) of items"
         #default="{ attrs: itemAttrs }"

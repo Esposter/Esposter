@@ -40,7 +40,7 @@ const filledTo = computed(
     }"
   >
     <div
-      :="mergeProps(attrs, $attrs)"
+      :="{ ...$attrs, ...mergeProps(attrs, $attrs) }"
       :class="{ 'op-disabled': isDisabled }"
       class="rating"
       text-muted

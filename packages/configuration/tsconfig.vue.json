@@ -26,6 +26,7 @@
     "fallthroughAttributes": true,
     "inferTemplateDollarAttrs": true,
     "inferTemplateDollarSlots": true,
+    "strictComponentAttrs": true,
     "strictTemplates": true,
     "strictVModel": true
   }

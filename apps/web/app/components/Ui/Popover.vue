@@ -100,7 +100,7 @@ defineExpose({ triggerElement });
   <UiTooltip v-if="$slots.trigger" #default="{ activatorProps }" :is-disabled="isOpen || isLabelVisible" :label>
     <UiButton
       ref="trigger"
-      :="mergeProps(activatorProps, $attrs)"
+      :="{ ...$attrs, ...mergeProps(activatorProps, $attrs) }"
       :aria-controls="id"
       :aria-expanded="isOpen"
       :aria-label="label"

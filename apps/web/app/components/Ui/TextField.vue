@@ -100,16 +100,20 @@ defineExpose({ element });
           <component
             :is="rows ? 'textarea' : 'input'"
             ref="element"
-            :="attrs"
+            :="{
+              ...attrs,
+              ...omitUndefined({
+                autocomplete: type ? TEXT_FIELD_TYPE_AUTOCOMPLETE_MAP[type] : undefined,
+                autofocus: isAutofocus || undefined,
+                maxlength,
+                placeholder: placeholder ?? (isSearch ? label : undefined),
+                rows,
+              }),
+            }"
             :aria-describedby="error && errors.length === 0 ? errorId : attrs['aria-describedby']"
             :aria-invalid="error || isInvalid ? true : attrs['aria-invalid']"
             :aria-required="isRequired || undefined"
-            :autocomplete="type ? TEXT_FIELD_TYPE_AUTOCOMPLETE_MAP[type] : undefined"
-            :autofocus="isAutofocus || undefined"
             :class="{ 'ui-pill pl-10 pr-10': isSearch }"
-            :maxlength
-            :placeholder="placeholder ?? (isSearch ? label : undefined)"
-            :rows
             class="control disabled:cursor-default disabled:op-disabled"
             px-2
             py-1

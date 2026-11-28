@@ -32,7 +32,7 @@ defineProps<Props>();
     </template>
     <template #default="{ activatorProps }">
       <UiButton
-        :="mergeProps(activatorProps, $attrs, disabledReason ? { 'aria-disabled': true } : {})"
+        :="{ ...$attrs, ...mergeProps(activatorProps, $attrs, disabledReason ? { 'aria-disabled': true } : {}) }"
         :aria-label="label"
         class="aria-disabled:op-disabled"
         :is-pending

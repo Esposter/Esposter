@@ -97,7 +97,7 @@ const optionsMenuTop = computed(() => (isSameBatch.value ? -9 : -2));
   >
     <component
       :is="MessageComponentMap[message.type]"
-      :id="message.id"
+      :id="String(message.id)"
       :tabindex="isTabbable ? 0 : -1"
       :mt="isSameBatch ? undefined : isCompact ? 2 : 4"
       :py="isCompact ? 0.5 : 1"

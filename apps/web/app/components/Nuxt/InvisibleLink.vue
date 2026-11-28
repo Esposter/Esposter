@@ -1,7 +1,20 @@
-<script lang="ts">
-// oxlint-disable-next-line vue/require-direct-export -- defineNuxtLink returns a component object; false positive
-export default defineNuxtLink({ componentName: "NuxtInvisibleLink" });
+<script setup lang="ts">
+import type { RouteLocationRaw } from "vue-router";
+
+interface Props {
+  to: RouteLocationRaw;
+}
+
+defineOptions({ inheritAttrs: false });
+defineSlots<{ default: () => VNode }>();
+const { to } = defineProps<Props>();
 </script>
+
+<template>
+  <NuxtLink :to :="$attrs">
+    <slot />
+  </NuxtLink>
+</template>
 
 <style scoped>
 @layer uno-base {

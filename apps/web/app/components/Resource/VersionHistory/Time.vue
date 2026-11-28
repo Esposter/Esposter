@@ -12,7 +12,7 @@ defineProps<Props>();
 <template>
   <UiTooltip label="">
     <template #default="{ activatorProps }">
-      <NuxtTime :="activatorProps" :datetime relative tabindex="0" />
+      <NuxtTime :="{ ...activatorProps, tabindex: 0 }" :datetime relative />
     </template>
     <template #content>
       <NuxtTime :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime />

@@ -38,7 +38,7 @@ Vite and Nitro read Nuxt's `#shared` and `#server` aliases before the manifest's
 
 A subpath import substitutes the whole specifier into its pattern, query included, so `#src/a.html?raw` names `./app/a.html?raw.ts`. An image is imported plainly, its default export the URL (a glTF model through `assetsInclude`), and a `?raw`, `?url` or `?worker` read passes the query as an `import.meta.glob` option, which Vite resolves through the manifest natively in the build, the dev server and Vitest. A glob is never root-absolute in the app: Nuxt's Vite root is `app/` and Vitest's is `apps/web`, so `/…` names a different folder in each. A package specifier keeps its query (`genshin-world/terrainTileWorker?worker`), since a package export does not substitute it. The lint refuses a query on a `#` name in every tree.
 
-Knip resolves a glob's alias through tsconfig `paths` only, never a manifest's `imports`, so `knip.config.ts` names the app's workers as entries, ignores `app/assets/**` and leaves the manifest's glob-only patterns unreported, each under a `@TODO` linking webpro-nl/knip#2399.
+Knip follows the app's `import.meta.glob` patterns through the manifest's `imports`, including their target files and subpaths, so `knip.config.ts` no longer names the workers as entries. It still ignores `app/assets/**`, whose tileset files are loaded through the Tiled maps rather than an import glob.
 
 ### Every script runs under `node`, and the test says so
 

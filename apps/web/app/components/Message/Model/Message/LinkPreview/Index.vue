@@ -6,7 +6,7 @@ import MessageModelMessageLinkPreviewDefault from "#src/components/Message/Model
 import MessageModelMessageLinkPreviewURL from "#src/components/Message/Model/Message/LinkPreview/URL.vue";
 
 const { contentType } = defineProps<LinkPreviewResponse>();
-const previewComponent = computed<Component | undefined>(() => {
+const component = computed<Component | undefined>(() => {
   if (contentType === MimeType.Html) return MessageModelMessageLinkPreviewURL;
   else if (contentType) return MessageModelMessageLinkPreviewDefault;
   else return undefined;
@@ -14,5 +14,5 @@ const previewComponent = computed<Component | undefined>(() => {
 </script>
 
 <template>
-  <component :is="previewComponent" :="$props" />
+  <component :is="component" :="$props" />
 </template>

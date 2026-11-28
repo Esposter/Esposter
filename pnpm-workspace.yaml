@@ -32,7 +32,7 @@ catalog:
   "@better-auth/drizzle-adapter": ^1.7.28
   "@cloudflare/realtimekit": ^2.1.0
   "@cloudflare/realtimekit-virtual-background": ^0.0.3
-  "@cloudflare/workers-types": ^5.20261127.1
+  "@cloudflare/workers-types": ^5.20261128.1
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
@@ -68,24 +68,24 @@ catalog:
   "@pulumi/github": ^6.15.1
   "@pulumi/pulumi": ^3.278.0
   "@standard-schema/spec": ^1.1.0
-  "@tiptap/core": ^3.35.0
-  "@tiptap/extension-code-block-lowlight": ^3.35.0
-  "@tiptap/extension-file-handler": ^3.35.0
-  "@tiptap/extension-image": ^3.35.0
-  "@tiptap/extension-list": ^3.35.0
-  "@tiptap/extension-mention": ^3.35.0
-  "@tiptap/extension-table": ^3.35.0
-  "@tiptap/extensions": ^3.35.0
-  "@tiptap/html": ^3.35.0
-  "@tiptap/pm": ^3.35.0
-  "@tiptap/starter-kit": ^3.35.0
-  "@tiptap/static-renderer": ^3.35.0
-  "@tiptap/suggestion": ^3.35.0
-  "@tiptap/vue-3": ^3.35.0
+  "@tiptap/core": ^3.35.1
+  "@tiptap/extension-code-block-lowlight": ^3.35.1
+  "@tiptap/extension-file-handler": ^3.35.1
+  "@tiptap/extension-image": ^3.35.1
+  "@tiptap/extension-list": ^3.35.1
+  "@tiptap/extension-mention": ^3.35.1
+  "@tiptap/extension-table": ^3.35.1
+  "@tiptap/extensions": ^3.35.1
+  "@tiptap/html": ^3.35.1
+  "@tiptap/pm": ^3.35.1
+  "@tiptap/starter-kit": ^3.35.1
+  "@tiptap/static-renderer": ^3.35.1
+  "@tiptap/suggestion": ^3.35.1
+  "@tiptap/vue-3": ^3.35.1
   "@tresjs/cientos": ^5.13.0
   "@tresjs/core": ^5.12.0
-  "@trpc/client": ^11.31.6
-  "@trpc/server": ^11.31.6
+  "@trpc/client": ^11.32.2
+  "@trpc/server": ^11.32.2
   "@tsdown/css": ^0.23.7
   "@types/mjml": ^5.4.2
   "@types/node": ^26.6.11
@@ -107,10 +107,10 @@ catalog:
   "@vitest/snapshot": ^5.1.2
   "@vitest/spy": ^5.1.2
   "@vitest/utils": ^5.1.2
-  "@vizejs/native": ^0.805.0
-  "@vizejs/nuxt": ^0.805.0
-  "@vizejs/unplugin": ^0.805.0
-  "@vizejs/vite-plugin": ^0.805.0
+  "@vizejs/native": ^0.812.0
+  "@vizejs/nuxt": ^0.812.0
+  "@vizejs/unplugin": ^0.812.0
+  "@vizejs/vite-plugin": ^0.812.0
   "@vue/compiler-core": ^3.5.46
   "@vue/test-utils": ^2.6.0
   "@vuetify/v0": ^1.4.0
@@ -133,14 +133,14 @@ catalog:
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.3
   jsonc-parser: ^3.3.1
-  knip: ^6.48.0
+  knip: ^6.49.0
   link-preview-js: ^6.0.0
   linkifyjs: ^4.4.0
   lowlight: ^3.3.0
   lru-cache: ^11.5.3
   marked: ^18.3.0
   mime-db: ^1.54.0
-  miniflare: 5.20261123.1-beta
+  miniflare: 5.20261127.0-beta
   minisearch: ^7.2.0
   mjml: ^5.4.1
   mjml-preset-core: ^5.4.1
@@ -193,11 +193,11 @@ catalog:
   vite-plus: ^1.8.0
   vitest: ^5.1.2
   vitest-browser-vue: ^3.1.0
-  vize: ^0.805.0
+  vize: ^0.812.0
   vue: ^3.5.46
   vue-router: ^5.5.3
   web-push: ^4.0.0
-  wrangler: ^4.168.0
+  wrangler: ^4.169.0
   write-excel-file: ^4.1.1
   zod: ^4.6.7
 

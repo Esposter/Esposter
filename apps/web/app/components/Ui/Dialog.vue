@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { UiDialogSize } from "#src/models/ui/UiDialogSize";
+import type { HTMLAttributes } from "vue";
 
 import { UiDialogPlacement } from "#src/models/ui/UiDialogPlacement";
 import { UI_DIALOG_INJECTION_KEY } from "#src/services/ui/constants";
@@ -24,6 +25,7 @@ interface Props {
   // What kind of thing the title names, drawn small above it: an editor's "Todo" over the todo's name
   overline?: string | undefined;
   placement?: UiDialogPlacement | undefined;
+  role?: HTMLAttributes["role"];
   // How wide it stands, for a placement that stands in the page; a drawer and the full screen keep their own width
   size?: UiDialogSize | undefined;
   title: string;
@@ -41,7 +43,7 @@ defineSlots<{
 }>();
 const isOpen = defineModel<boolean>({ default: false });
 const isExpanded = defineModel<boolean>("isExpanded", { default: false });
-const { isSizeFixed, isTall, placement = UiDialogPlacement.High, size } = defineProps<Props>();
+const { isSizeFixed, isTall, placement = UiDialogPlacement.High, role, size } = defineProps<Props>();
 // The body and the footer both take this id, so a footer's submit names the form the body holds
 const formId = useId();
 // A dialog standing in the page rather than at an edge: only it has a page to take, and only it keeps the size a call
@@ -84,6 +86,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
       class="ui-dialog"
       :class="[UiDialogPlacementClassMap[displayPlacement], sizeClass]"
       :data-placement="displayPlacement"
+      :role
       tabindex="-1"
       text-inherit
       p-0
