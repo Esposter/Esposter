@@ -12,8 +12,8 @@ interface Props {
 // Invalid only once a field has said so, since a form nobody has typed in yet has nothing wrong with it. A submit
 // Checks every field first and goes through only when all of them pass
 defineSlots<{ default: () => VNode }>();
-const { id, role } = defineProps<Props>();
 const isValid = defineModel<boolean>("isValid", { default: true });
+defineProps<Props>();
 const emit = defineEmits<{ submit: [] }>();
 </script>
 

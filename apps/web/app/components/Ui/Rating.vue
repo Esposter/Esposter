@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { VNodeProps } from "vue";
+
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { Radio } from "@vuetify/v0";
 import { mergeProps } from "vue";
@@ -40,7 +42,7 @@ const filledTo = computed(
     }"
   >
     <div
-      :="{ ...$attrs, ...mergeProps(attrs, $attrs) }"
+      :="mergeProps(attrs, $attrs as VNodeProps)"
       :class="{ 'op-disabled': isDisabled }"
       class="rating"
       text-muted

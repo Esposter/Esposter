@@ -11,16 +11,16 @@ interface Props {
 }
 // One command as an option of the list: a real link when it has somewhere to go, and a click that does nothing while it
 // Is disabled, so the keyboard and the pointer both reach it through the one click
-const { id } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [command: UiCommand] }>();
-const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
+const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink") as Component;
 </script>
 
 <template>
   <component
     :is="command.to ? NuxtInvisibleLink : 'div'"
-    class="aria-disabled:op-disabled"
     :id
+    class="aria-disabled:op-disabled"
     ui-item
     :="command.to ? { to: command.to } : {}"
     :aria-disabled="command.isDisabled || undefined"

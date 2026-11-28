@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T extends string">
 import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
+import type { VNodeProps } from "vue";
 
 import { Radio } from "@vuetify/v0";
 import { mergeProps } from "vue";
@@ -32,7 +33,7 @@ const id = useId();
       if (value !== undefined) modelValue = value;
     }"
   >
-    <div :="{ ...$attrs, ...mergeProps(attrs, $attrs) }" flex flex-col>
+    <div :="mergeProps(attrs, $attrs as VNodeProps)" flex flex-col>
       <Radio.Root
         v-for="({ description, title, value }, index) of items"
         #default="{ attrs: itemAttrs }"

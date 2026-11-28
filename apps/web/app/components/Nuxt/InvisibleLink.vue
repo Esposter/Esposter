@@ -7,7 +7,7 @@ interface Props {
 
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
-const { to } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

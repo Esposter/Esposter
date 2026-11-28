@@ -1,10 +1,10 @@
 <script setup lang="ts" generic="T extends number | string">
 import type { UiMenuItem } from "#src/models/ui/UiMenuItem";
 import type { UiToggleGroupVariant } from "#src/models/ui/UiToggleGroupVariant";
+import type { VNodeProps } from "vue";
 
 import { UiButtonVariant } from "#src/models/ui/UiButtonVariant";
 import { Radio } from "@vuetify/v0";
-import { mergeProps } from "vue";
 
 interface Props {
   isDisabled?: true | undefined;
@@ -44,7 +44,7 @@ const id = useId();
     }"
   >
     <div
-      :="{ ...$attrs, ...mergeProps(attrs, $attrs) }"
+      :="mergeProps(attrs, $attrs as VNodeProps)"
       :class="[
         isVertical ? 'inline-flex flex-col' : 'inline-flex',
         variant ? 'ui-bar' : 'ui-field',
